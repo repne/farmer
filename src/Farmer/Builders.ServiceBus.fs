@@ -30,7 +30,7 @@ type ServiceBusQueueConfig =
     member this.NamespaceDefaultConnectionString = this.GetKeyPath this.NamespaceName.ResourceName.Value "primaryConnectionString"
     member this.DefaultSharedAccessPolicyPrimaryKey = this.GetKeyPath this.NamespaceName.ResourceName.Value "primaryKey"
     interface IResourceBuilder with
-        member this.BuildResources location existingResources = [
+        member this.BuildResources location = [
             let queue =
                   { Name = this.Name
                     LockDuration = this.LockDurationMinutes |> Option.map (sprintf "PT%dM")
@@ -64,8 +64,9 @@ type ServiceBusQueueConfig =
                       Queues = [ queue ]
                     }
             | External namespaceName ->
-                existingResources
-                |> Helpers.tryMergeResource namespaceName (fun ns -> { ns with Queues = queue :: ns.Queues })
+                MergeResource(namespaceName, typeof<Namespace>, fun ns ->
+                  let ns = ns :?> Namespace
+                  { ns with Queues = queue :: ns.Queues } :> _)
             | AutomaticPlaceholder ->
                 NotSet
         ]

@@ -23,6 +23,11 @@ let toTemplate (deployment:Deployment) =
     deployment.Template
     |> Writer.TemplateGeneration.processTemplate
 
+type MockIResource(name) =
+    interface IResource with
+        member _.ResourceName = ResourceName name
+        member _.ToArmObject() = obj()
+
 let tests = testList "Template" [
     test "Can create a basic template" {
         let template = arm { location NorthEurope } |> toTemplate
@@ -108,32 +113,20 @@ let tests = testList "Template" [
         Expect.sequenceEqual template.Template.Parameters [ SecureParameter "password-for-isaacvm" ] "Missing parameter for VM."
     }
 
-    test "Fails if can't locate a parent resource" {
-        Expect.throws(fun () ->
-            arm {
-                add_resource (fun _ _ -> [ CouldNotLocate (ResourceName "test") ])
-            } |> ignore) "Should throw an could not locate exception."
-    }
-
     test "Fails if parent resource is not set" {
         Expect.throws(fun () ->
             arm {
-                add_resource (fun _ _ -> [ NotSet ])
+                add_resource (fun _ -> [ NotSet ])
             } |> ignore) "Should throw an not set exception."
     }
 
     test "Correctly replaces a merged resource" {
-        let original =
-            { new IResource with
-                member _.ResourceName = ResourceName "A";
-                member _.ToArmObject() = obj() }
-        let updated =
-            { new IResource with
-                member _.ResourceName = ResourceName "B";
-                member _.ToArmObject() = obj() }
+        let original = MockIResource("A")
+        let updated = MockIResource("A")
+
         let template = arm {
-            add_resource (fun _ _ -> [ NewResource original ])
-            add_resource (fun _ _ -> [ MergedResource (original, updated) ])
+            add_resource (fun _ -> [ NewResource original ])
+            add_resource (fun _ -> [ MergeResource (ResourceName "A", typeof<MockIResource>, (fun _ -> updated :> _)) ])
         }
         Expect.equal template.Template.Resources [ updated ] "Should have removed the original resource."
     }

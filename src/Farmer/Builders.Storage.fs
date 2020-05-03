@@ -27,7 +27,7 @@ type StorageAccountConfig =
     /// Gets the ARM expression path to the key of this storage account.
     member this.Key = buildKey this.Name
     interface IResourceBuilder with
-        member this.BuildResources location _ = [
+        member this.BuildResources location = [
             NewResource
                 { Location = location
                   Name = this.Name

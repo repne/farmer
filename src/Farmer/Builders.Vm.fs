@@ -40,7 +40,7 @@ type VmConfig =
     member this.IpName = makeResourceName this.Name "ip"
     member this.Hostname = sprintf "reference('%s').dnsSettings.fqdn" this.IpName.Value |> ArmExpression
     interface IResourceBuilder with
-        member this.BuildResources location _ = [
+        member this.BuildResources location = [
             // VM itself
             NewResource
                 { Name = this.Name
@@ -61,7 +61,7 @@ type VmConfig =
                         {| Size = dataDisk.Size
                            DiskType = string dataDisk.DiskType |}
                   ] }
-            
+
             // NIC
             NewResource
                 { Name = this.NicName
@@ -70,7 +70,7 @@ type VmConfig =
                     {| SubnetName = this.SubnetName
                        PublicIpName = this.IpName |} ]
                   VirtualNetwork = this.VnetName }
-            
+
             // VNET
             NewResource
                 { Name = this.VnetName

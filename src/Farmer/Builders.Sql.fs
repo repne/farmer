@@ -50,7 +50,7 @@ type SqlAzureConfig =
     member this.Server =
         this.ServerName.ResourceName
     interface IResourceBuilder with
-        member this.BuildResources location resources = [
+        member this.BuildResources location = [
             let database =
                 {| Name = this.Name
                    Edition =
@@ -81,8 +81,9 @@ type SqlAzureConfig =
                           Databases = [ database ]
                         }
                 | External serverName ->
-                    resources
-                    |> Helpers.tryMergeResource serverName (fun server -> { server with Databases = database :: server.Databases })
+                    MergeResource(serverName, typeof<Server>, fun server ->
+                        let server = server :?> Server
+                        { server with Databases = database :: server.Databases } :> _)
                 | AutomaticPlaceholder ->
                     NotSet
             server

@@ -38,7 +38,7 @@ type CognitiveServicesConfig =
       Sku : CognitiveServicesSku
       Api : CognitiveServicesApi }
     interface IResourceBuilder with
-        member this.BuildResources location _ = [
+        member this.BuildResources location = [
             NewResource { Name = this.Name
                           Location = location
                           Sku = this.Sku.ToString().Replace("_", ".")

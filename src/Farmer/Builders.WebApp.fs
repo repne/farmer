@@ -91,7 +91,7 @@ type WebAppConfig =
     /// Gets the App Insights name for this web app, if it exists.
     member this.AppInsights = this.AppInsightsName |> Option.map (fun ai -> ai.ResourceName)
     interface IResourceBuilder with
-        member this.BuildResources location existingResources = [
+        member this.BuildResources location = [
             let webApp =
                 { Name = this.Name
                   Location = location
@@ -242,7 +242,7 @@ type WebAppConfig =
                     |> Some
             NewResource webApp
             match ai with Some ai -> NewResource ai | None -> ()
-            match serverFarm with Some serverFarm -> yield! (serverFarm :> IResourceBuilder).BuildResources location existingResources | None -> ()
+            match serverFarm with Some serverFarm -> yield! (serverFarm :> IResourceBuilder).BuildResources location | None -> ()
         ]
 
 type WebAppBuilder() =

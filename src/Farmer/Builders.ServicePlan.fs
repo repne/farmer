@@ -34,7 +34,7 @@ type ServicePlanConfig =
       WorkerCount : int
       OperatingSystem : OS }
     interface IResourceBuilder with
-        member this.BuildResources location _ = [
+        member this.BuildResources location = [
             NewResource
               { Location = location
                 Name = this.Name

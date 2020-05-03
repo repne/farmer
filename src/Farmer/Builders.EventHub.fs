@@ -43,7 +43,7 @@ type EventHubConfig =
             this.EventHubNamespace.ResourceName.Value
         |> this.ToKeyExpression
     interface IResourceBuilder with
-        member eventHubConfig.BuildResources location _ = [
+        member eventHubConfig.BuildResources location = [
             let eventHubNamespaceName = eventHubConfig.EventHubNamespace.ResourceName
             let eventHubNamespace =
                 match eventHubConfig.EventHubNamespace with

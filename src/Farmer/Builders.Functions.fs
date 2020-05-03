@@ -46,7 +46,7 @@ type FunctionsConfig =
     /// Gets the Storage Account name for this functions app.
     member this.StorageAccount = this.StorageAccountName.ResourceName
     interface IResourceBuilder with
-        member this.BuildResources location existingResources = [
+        member this.BuildResources location = [
             NewResource
                 { Name = this.Name
                   ServicePlan = this.ServicePlanName.ResourceName
@@ -112,7 +112,7 @@ type FunctionsConfig =
                       WorkerSize = Serverless
                       WorkerCount = 0
                       OperatingSystem = this.OperatingSystem }
-                yield! (servicePlanConfig :> IResourceBuilder).BuildResources location existingResources
+                yield! (servicePlanConfig :> IResourceBuilder).BuildResources location
             match this.StorageAccountName with
             | AutomaticallyCreated resourceName ->
                 NewResource { StorageAccount.Name = resourceName

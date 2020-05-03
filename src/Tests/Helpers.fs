@@ -13,10 +13,9 @@ let findAzureResources<'T when 'T : null> (serializationSettings:Newtonsoft.Json
     |> Seq.toList
 
 let convertResourceBuilder mapper (serializationSettings:Newtonsoft.Json.JsonSerializerSettings) (resourceBuilder:IResourceBuilder) =
-    resourceBuilder.BuildResources NorthEurope []
+    resourceBuilder.BuildResources NorthEurope
     |> List.pick(function
-        | MergedResource _
-        | CouldNotLocate _
+        | MergeResource _
         | NotSet ->
             None
         | NewResource r ->

@@ -57,7 +57,7 @@ type ContainerConfig =
     /// Gets the name of the container group.
     member this.GroupName = this.ContainerGroupName.ResourceName
     interface IResourceBuilder with
-        member this.BuildResources location existingResources = [
+        member this.BuildResources location = [
             let container =
                 {| Name = this.Name
                    Image = this.Image
@@ -84,8 +84,9 @@ type ContainerConfig =
                             | PrivateAddress -> "Private" |}
                     }
             | External containerGroupName ->
-                existingResources
-                |> Helpers.tryMergeResource containerGroupName (fun group -> { group with ContainerInstances = group.ContainerInstances @ [ container ] })
+                MergeResource(containerGroupName, typeof<ContainerGroup>, fun group ->
+                    let group = group :?> ContainerGroup
+                    { group with ContainerInstances = group.ContainerInstances @ [ container ] } :> _)
             | AutomaticPlaceholder ->
                 NotSet
         ]

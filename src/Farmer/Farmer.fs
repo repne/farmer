@@ -1,4 +1,5 @@
 namespace Farmer
+open System
 
 /// Represents a name of an ARM resource
 type ResourceName =
@@ -52,17 +53,16 @@ type IPostDeploy =
 /// Potential actions that can occur as a result of attempting to generate a resource action.
 type ResourceAction =
     | NewResource of IResource
-    | MergedResource of old:IResource * replacement:IResource
-    | CouldNotLocate of ResourceName
+    | MergeResource of ResourceName * Type * (IResource -> IResource)
     | NotSet
 
 /// Represents a high-level configuration that can create a set of Resources.
 type IResourceBuilder =
     /// Given a location and the currently-built resources, returns a set of resource actions.
-    abstract member BuildResources : Location -> IResource list -> ResourceAction list
+    abstract member BuildResources : Location -> ResourceAction list
 
 /// A functional equivalent of the IResourceBuilder's BuildResources method.
-type ResourceBuilder = Location -> IResource list -> ResourceAction list
+type ResourceBuilder = Location -> ResourceAction list
 
 /// A low-level builder that takes in a location and generates raw ARM resources (and their
 /// resource name) in a form ready for JSON serialization.

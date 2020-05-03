@@ -30,7 +30,7 @@ type CosmosDbConfig =
       PublicNetworkAccess : FeatureFlag
       FreeTier : bool }
     interface IResourceBuilder with
-        member this.BuildResources location _ = [
+        member this.BuildResources location = [
             match this.ServerName with
             | AutomaticallyCreated name ->
                 NewResource

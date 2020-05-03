@@ -92,7 +92,7 @@ type KeyVaultConfig =
       Uri : Uri option
       Secrets : SecretConfig list }
     interface IResourceBuilder with
-        member kvc.BuildResources location _ = [
+        member kvc.BuildResources location = [
             let keyVault =
                 { Name = kvc.Name
                   Location = location

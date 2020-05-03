@@ -25,7 +25,7 @@ type RedisConfig =
       MinimumTlsVersion : TlsVersion option }
     member this.Key = buildRedisKey this.Name
     interface IResourceBuilder with
-        member this.BuildResources location _ = [
+        member this.BuildResources location = [
             NewResource
                 { Name = this.Name
                   Location = location
