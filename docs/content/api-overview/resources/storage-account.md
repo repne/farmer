@@ -58,7 +58,7 @@ open Farmer.Builders
 
 let storage = storageAccount {
     name "isaacssuperstorage"
-    sku Storage.Premium_LRS
+    sku Storage.Sku.Premium_LRS
     add_public_container "mypubliccontainer"
     add_private_container "myprivatecontainer"
     add_blob_container "myblobcontainer"
